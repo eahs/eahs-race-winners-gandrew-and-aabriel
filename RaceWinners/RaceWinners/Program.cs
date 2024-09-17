@@ -22,41 +22,25 @@ public class Program
             Console.WriteLine($"{data[i].Name} - [{ranks}]");
         }
 
-        int minRanks = data[0].Ranks.Count;
-
         // find min number of ranks in all the groups
-        for (int group = 1; group < data.Count; group++)
+        int minRanks = data.Min(group => group.Ranks.Count);
+
+        // Cut larger lists to make each group the same size
+        foreach (var group in data)
         {
-            if (data[group].Ranks.Count < minRanks)
+            if (group.Ranks.Count > minRanks)
             {
-                minRanks = data[group].Ranks.Count;
+                group.Ranks.RemoveRange(minRanks, group.Ranks.Count - minRanks);
             }
         }
 
-        // cut bigger lists to make each group the same size
-        for (int group = 0; group < data.Count; group++)
-        {
-            while (data[group].Ranks.Count > minRanks)
-            {
-                data[group].Ranks.RemoveAt(data[group].Ranks.Count - 1);
-            }
-        }
-
-        float[] averages = new float[data.Count];
+        double[] averages = new double[data.Count];
         int lowestAverageIndex = 0;
 
         // calculate average of each group
         for (int group = 0; group < data.Count; group++)
         {
-
-            int average = 0;
-
-            for (int rank = 0; rank < data[group].Ranks.Count; rank++)
-            {
-                average += data[group].Ranks[rank];
-            }
-
-            average /= data[group].Ranks.Count;
+            double average = Math.Round(data[group].Ranks.Average());
             averages[group] = average;
 
             if (average < averages[lowestAverageIndex])
